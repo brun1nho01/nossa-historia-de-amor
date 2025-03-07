@@ -355,12 +355,18 @@ function App() {
 
   // Verifica se deve mostrar a timeline com base no estado da navegação
   useEffect(() => {
-    if (location.state && location.state.showTimeline === true) {
+    if (location.state?.showTimeline === true) {
+      // Primeiro muda a tela
       setScreen("timeline");
-      // Limpa o estado de navegação após processar
+      // Limpa o estado de navegação
       window.history.replaceState({}, document.title);
-      // Força o scroll para o topo
-      window.scrollTo(0, 0);
+      // Força o scroll para o topo após um pequeno delay
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "instant",
+        });
+      }, 100);
     }
   }, [location.state]);
 

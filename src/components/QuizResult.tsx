@@ -26,18 +26,22 @@ const QuizResult: React.FC = () => {
   };
 
   const goToTimeline = () => {
-    resetQuiz(); // Reseta o quiz para uso futuro
+    // Primeiro reseta o quiz
+    resetQuiz();
 
-    // Primeiro navega
-    navigate("/", {
-      state: { showTimeline: true },
-      replace: true,
+    // Força o scroll para o topo imediatamente
+    window.scrollTo({
+      top: 0,
+      behavior: "instant",
     });
 
-    // Pequeno delay para garantir que a navegação foi concluída
+    // Pequeno delay antes de navegar
     setTimeout(() => {
-      window.scrollTo(0, 0);
-    }, 100);
+      navigate("/", {
+        state: { showTimeline: true },
+        replace: true,
+      });
+    }, 50);
   };
 
   return (
