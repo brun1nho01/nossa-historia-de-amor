@@ -28,14 +28,16 @@ const QuizResult: React.FC = () => {
   const goToTimeline = () => {
     resetQuiz(); // Reseta o quiz para uso futuro
 
-    // Rola a página para o topo antes de navegar
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    // Navegar para a página inicial com o estado para mostrar a timeline
+    // Primeiro navega
     navigate("/", {
       state: { showTimeline: true },
-      replace: true, // Substitui a entrada atual no histórico para evitar voltar ao quiz
+      replace: true,
     });
+
+    // Pequeno delay para garantir que a navegação foi concluída
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
   };
 
   return (

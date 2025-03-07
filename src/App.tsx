@@ -355,19 +355,18 @@ function App() {
 
   // Verifica se deve mostrar a timeline com base no estado da navegação
   useEffect(() => {
-    // Apenas muda para timeline se explicitamente solicitado pelo estado
     if (location.state && location.state.showTimeline === true) {
       setScreen("timeline");
-      // Rola a página para o topo
-      window.scrollTo({ top: 0, behavior: "smooth" });
       // Limpa o estado de navegação após processar
       window.history.replaceState({}, document.title);
+      // Força o scroll para o topo
+      window.scrollTo(0, 0);
     }
   }, [location.state]);
 
-  // Também adiciona um useEffect para rolar para o topo quando a tela muda
+  // Força o scroll para o topo quando a tela muda
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo(0, 0);
   }, [screen]);
 
   // Função moveNoButton que não depende de closures
