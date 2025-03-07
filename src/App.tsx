@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Heart, Clock, Calendar, MapPin, Plane, Baby } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import StarrySky from "./components/StarrySky";
-import PolaroidGallery from "./components/PolaroidGallery";
-import EnhancedTimeline from "./components/EnhancedTimeline";
-import AnimatedLetter from "./components/AnimatedLetter";
+
+// Lazy loading dos componentes
+const StarrySky = lazy(() => import("./components/StarrySky"));
+const PolaroidGallery = lazy(() => import("./components/PolaroidGallery"));
+const EnhancedTimeline = lazy(() => import("./components/EnhancedTimeline"));
+const AnimatedLetter = lazy(() => import("./components/AnimatedLetter"));
 
 // Função auxiliar para criar datas com hora, minuto e segundo
 function createDateTime(
@@ -120,10 +122,19 @@ const NEXT_STEPS = [
   },
 ];
 
+// Loading component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center w-full h-32">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500"></div>
+  </div>
+);
+
 // Componente de fundo com película que será reutilizado em todas as telas
 const BackgroundWithOverlay = ({ children }: { children: React.ReactNode }) => (
   <div className="min-h-screen bg-gradient-to-b from-indigo-900 via-purple-900 to-pink-800 relative">
-    <StarrySky starCount={150} shootingStarCount={8} constellationCount={5} />
+    <Suspense fallback={<LoadingSpinner />}>
+      <StarrySky starCount={100} shootingStarCount={5} constellationCount={3} />
+    </Suspense>
     <div className="relative z-10">{children}</div>
   </div>
 );
@@ -527,25 +538,29 @@ function App() {
                 Nossa História de Amor ❤️
               </h1>
 
-              <div className="w-full bg-white/70 rounded-xl shadow-lg p-4 md:p-6 mb-6">
-                <div className="flex items-center justify-center mb-4">
-                  <Clock className="w-5 h-5 md:w-6 md:h-6 text-red-500 mr-2" />
-                  <span className="text-lg md:text-xl font-semibold text-gray-700">
-                    Tempo Juntos
-                  </span>
-                </div>
+              <Suspense fallback={<LoadingSpinner />}>
+                <div className="w-full bg-white/70 rounded-xl shadow-lg p-4 md:p-6 mb-6">
+                  <div className="flex items-center justify-center mb-4">
+                    <Clock className="w-5 h-5 md:w-6 md:h-6 text-red-500 mr-2" />
+                    <span className="text-lg md:text-xl font-semibold text-gray-700">
+                      Tempo Juntos
+                    </span>
+                  </div>
 
-                <div className="flex flex-col items-center">
-                  {/* Flip Clock Countdown */}
-                  <div className="mb-4 w-full overflow-x-auto">
-                    <CustomFlipClock />
+                  <div className="flex flex-col items-center">
+                    {/* Flip Clock Countdown */}
+                    <div className="mb-4 w-full overflow-x-auto">
+                      <CustomFlipClock />
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Suspense>
             </div>
 
             {/* Contador regressivo para a viagem */}
-            <TripCountdown />
+            <Suspense fallback={<LoadingSpinner />}>
+              <TripCountdown />
+            </Suspense>
 
             {/* Carta animada com título "Juliana!" */}
             <div className="mb-8">
@@ -553,7 +568,9 @@ function App() {
                 Uma Carta Especial Para Você
               </h3>
               <div className="bg-white/70 rounded-xl shadow-lg p-4">
-                <AnimatedLetter />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <AnimatedLetter />
+                </Suspense>
               </div>
             </div>
 
@@ -566,26 +583,32 @@ function App() {
                 <p className="text-gray-700 mb-6 text-center italic">
                   Clique em uma foto para vê-la em tamanho maior
                 </p>
-                <PolaroidGallery
-                  photos={PHOTOS.map((src, index) => ({
-                    src,
-                    caption:
-                      PHOTO_CAPTIONS[index] ||
-                      `Nosso momento especial ${index + 1}`,
-                  }))}
-                />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <PolaroidGallery
+                    photos={PHOTOS.map((src, index) => ({
+                      src,
+                      caption:
+                        PHOTO_CAPTIONS[index] ||
+                        `Nosso momento especial ${index + 1}`,
+                    }))}
+                  />
+                </Suspense>
               </div>
             </div>
 
             {/* Seção de próximos passos */}
-            <NextSteps />
+            <Suspense fallback={<LoadingSpinner />}>
+              <NextSteps />
+            </Suspense>
 
             {/* Linha do tempo melhorada */}
             <div className="mb-8">
               <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
                 Nossa Linha do Tempo
               </h3>
-              <EnhancedTimeline milestones={MILESTONES} />
+              <Suspense fallback={<LoadingSpinner />}>
+                <EnhancedTimeline milestones={MILESTONES} />
+              </Suspense>
             </div>
           </div>
         </div>

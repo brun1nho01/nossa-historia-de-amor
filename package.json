@@ -26,7 +26,7 @@
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@types/react-transition-group": "^4.4.10",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.18",
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
@@ -38,7 +38,7 @@
     "terser": "^5.39.0",
     "typescript": "^5.3.3",
     "typescript-eslint": "^7.1.0",
-    "vite": "^5.1.4",
+    "vite": "^6.2.1",
     "vite-plugin-pwa": "^0.21.1"
   }
 }
