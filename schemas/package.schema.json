@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Package.json",
+  "description": "NPM package.json file",
+  "type": "object",
+  "required": ["name", "version"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the package."
+    },
+    "version": {
+      "type": "string",
+      "description": "Version of the package.",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-.+)?$"
+    },
+    "private": {
+      "type": "boolean",
+      "description": "If true, then the package is private and npm will refuse to publish it."
+    },
+    "type": {
+      "type": "string",
+      "description": "The package type. Can be 'module' or 'commonjs'.",
+      "enum": ["module", "commonjs"]
+    },
+    "scripts": {
+      "type": "object",
+      "description": "Scripts to run at various times in the package lifecycle.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "description": "Dependencies of the package.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "devDependencies": {
+      "type": "object",
+      "description": "Development dependencies of the package.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}

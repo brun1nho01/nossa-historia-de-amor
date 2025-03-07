@@ -1,0 +1,863 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Aplicando a fonte Poppins como padrão para todo o site */
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+/* Estilos personalizados para o relógio flip */
+.flip-clock {
+  --fcc-flip-duration: 0.5s; /* duração da transição quando o cartão vira */
+  --fcc-spacing: 8px; /* espaço entre as unidades de tempo e separadores */
+  --fcc-digit-block-width: 40px; /* largura do cartão de dígito */
+  --fcc-digit-block-height: 60px; /* altura do cartão de dígito, recomendado em número par */
+  --fcc-digit-block-radius: 5px; /* raio da borda do cartão de dígito */
+  --fcc-digit-block-spacing: 5px; /* espaço entre blocos em cada unidade de tempo */
+  --fcc-digit-font-size: 30px; /* tamanho da fonte do dígito */
+  --fcc-digit-color: #333; /* cor do dígito */
+  --fcc-label-font-size: 10px; /* tamanho da fonte do rótulo */
+  --fcc-label-color: #666; /* cor do rótulo */
+  --fcc-background: white; /* fundo do cartão de dígito */
+  --fcc-divider-color: #666; /* cor do divisor */
+  --fcc-divider-height: 1px; /* altura do divisor */
+  --fcc-separator-size: 6px; /* tamanho do separador (dois pontos) */
+  --fcc-separator-color: #666; /* cor do separador */
+}
+
+/* Sobrescrever os rótulos padrão para incluir anos e meses */
+.flip-clock .flip-clock__piece:nth-child(1) .flip-clock__label {
+  content: "Anos";
+}
+
+.flip-clock .flip-clock__piece:nth-child(2) .flip-clock__label {
+  content: "Meses";
+}
+
+.flip-clock .flip-clock__piece:nth-child(3) .flip-clock__label {
+  content: "Dias";
+}
+
+.flip-clock .flip-clock__piece:nth-child(4) .flip-clock__label {
+  content: "Horas";
+}
+
+.flip-clock .flip-clock__piece:nth-child(5) .flip-clock__label {
+  content: "Minutos";
+}
+
+.flip-clock .flip-clock__piece:nth-child(6) .flip-clock__label {
+  content: "Segundos";
+}
+
+/* Estilos para o efeito flip */
+.flip-card {
+  perspective: 1000px;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(145deg, #f0f0f0, #e6e6e6);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.5s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.flip-card:hover {
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 3px 6px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.flip-card.flipping {
+  animation: flip 0.5s ease-in-out;
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateX(0deg);
+    background: linear-gradient(145deg, #f0f0f0, #e6e6e6);
+  }
+  50% {
+    transform: rotateX(90deg);
+    background: linear-gradient(145deg, #e6e6e6, #d9d9d9);
+  }
+  100% {
+    transform: rotateX(0deg);
+    background: linear-gradient(145deg, #f0f0f0, #e6e6e6);
+  }
+}
+
+.flip-card div {
+  font-family: "Roboto Mono", monospace;
+  color: #333;
+  font-weight: 700;
+  font-size: 1.5rem;
+  transition: all 0.3s;
+}
+
+/* Adiciona um efeito de brilho quando o card está animando */
+.flip-card.flipping div {
+  color: #0066cc;
+  text-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 640px) {
+  .flip-card {
+    width: 60px;
+    height: 60px;
+  }
+
+  .flip-card div {
+    font-size: 1.25rem;
+  }
+}
+
+/* Estilos para o contêiner de páginas e transições */
+/* Removido para corrigir problemas */
+
+/* Animações de elementos com tema de amor */
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1);
+  }
+  40% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1.5s infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Decorações com tema de amor */
+.heart-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.heart-bg::before {
+  content: "❤️";
+  position: absolute;
+  font-size: 20px;
+  opacity: 0.1;
+  animation: float 3s ease-in-out infinite;
+}
+
+.heart-bg::after {
+  content: "❤️";
+  position: absolute;
+  font-size: 20px;
+  opacity: 0.1;
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Estilos para expandir fotos */
+.photo-container {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.photo-container:hover {
+  transform: scale(1.03);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.photo-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.photo-container:hover .photo-caption {
+  transform: translateY(0);
+}
+
+/* Estilos para o contador regressivo */
+.countdown-container {
+  background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+.countdown-value {
+  font-size: 2rem;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.countdown-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 5px;
+}
+
+/* Estilos para a seção de próximos passos */
+.next-steps-container {
+  background: linear-gradient(135deg, #a8edea, #fed6e3);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.step-item {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.step-item:hover {
+  transform: translateY(-5px);
+}
+
+/* Estilos para o céu estrelado */
+.starry-sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  background-color: var(--star-color, white);
+  border-radius: 50%;
+  filter: drop-shadow(
+    0 0 calc(6px * var(--star-brightness, 1))
+      var(--star-color, rgba(255, 255, 255, 0.8))
+  );
+  animation: twinkle var(--twinkle-duration) ease-in-out infinite;
+  opacity: var(--star-brightness, 0.8);
+}
+
+.constellation-star {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+  animation: twinkle var(--twinkle-duration) ease-in-out infinite;
+  z-index: 6;
+}
+
+.constellation-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.1)
+  );
+  transform-origin: left center;
+  opacity: 0.4;
+  animation: constellation-pulse 8s ease-in-out infinite;
+  z-index: 5;
+}
+
+@keyframes constellation-pulse {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.shooting-star {
+  position: absolute;
+  width: 100px;
+  height: var(--shooting-size, 1px);
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(var(--rotation));
+  animation: shooting var(--shooting-duration) linear infinite;
+  animation-delay: var(--shooting-delay);
+  opacity: 0;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: calc(0.2 * var(--star-brightness, 1));
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: calc(1 * var(--star-brightness, 1));
+    transform: scale(1.2);
+  }
+}
+
+@keyframes shooting {
+  0% {
+    transform: translateX(-100px) translateY(0) rotate(var(--rotation));
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  30%,
+  100% {
+    transform: translateX(calc(100vw + 100px))
+      translateY(calc(100vw * tan(var(--rotation)))) rotate(var(--rotation));
+    opacity: 0;
+  }
+}
+
+/* Estilos para fotos polaroid */
+.polaroid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
+  position: relative;
+}
+
+.polaroid {
+  background-color: white;
+  padding: 1rem 1rem 2.5rem 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+  transform: rotate(var(--rotation));
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.polaroid:hover {
+  transform: rotate(var(--rotation)) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.polaroid.expanded {
+  z-index: 50;
+}
+
+.polaroid-tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(2deg);
+  width: 40px;
+  height: 30px;
+  background-color: var(--tape-color, #ffd700);
+  opacity: 0.7;
+  clip-path: polygon(0% 50%, 15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%);
+  z-index: 2;
+}
+
+.polaroid-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+  transition: all 0.5s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.polaroid:hover .polaroid-img {
+  filter: brightness(1.1);
+}
+
+.polaroid-caption-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.polaroid-caption {
+  font-family: "Poppins", sans-serif;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #222;
+  padding: 0.3rem 0.5rem;
+  line-height: 1.2;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  letter-spacing: 0.01em;
+}
+
+.polaroid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 70%,
+    rgba(255, 255, 255, 0.8) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.polaroid:hover::before {
+  opacity: 1;
+}
+
+.polaroid-expanded-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+  cursor: pointer;
+}
+
+.polaroid-expanded-content {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 4px;
+  max-width: 90%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transform: scale(0.9);
+  animation: scaleIn 0.3s ease forwards;
+  position: relative;
+  cursor: default;
+  overflow: auto;
+}
+
+.polaroid-close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 22px;
+  font-family: "Poppins", sans-serif;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+  padding-bottom: 4px;
+}
+
+.polaroid-close-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+}
+
+.polaroid-close-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.polaroid-expanded-img {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border: 10px solid white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.polaroid-expanded-caption {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #222;
+  margin-top: 1rem;
+  text-align: center;
+  max-width: 80%;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Melhorias para a linha do tempo */
+.timeline-container {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.timeline-container::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  background-color: rgba(255, 192, 203, 0.5);
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  margin-left: -3px;
+  border-radius: 3px;
+}
+
+.timeline-item {
+  padding: 10px 40px;
+  position: relative;
+  width: 50%;
+  box-sizing: border-box;
+}
+
+.timeline-item::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 4px solid #ff4081;
+  top: 15px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.timeline-left {
+  left: 0;
+}
+
+.timeline-right {
+  left: 50%;
+}
+
+.timeline-left::after {
+  right: -10px;
+}
+
+.timeline-right::after {
+  left: -10px;
+}
+
+.timeline-content {
+  padding: 20px;
+  background-color: white;
+  position: relative;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.timeline-date {
+  font-weight: bold;
+  color: #ff4081;
+  margin-bottom: 5px;
+}
+
+.timeline-title {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+@media screen and (max-width: 768px) {
+  .timeline-container::after {
+    left: 31px;
+  }
+
+  .timeline-item {
+    width: 100%;
+    padding-left: 70px;
+    padding-right: 25px;
+  }
+
+  .timeline-item::after {
+    left: 21px;
+  }
+
+  .timeline-right {
+    left: 0;
+  }
+}
+
+/* Animações para a carta */
+@keyframes openLetter {
+  0% {
+    transform: scale(0.8) rotateY(0deg);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05) rotateY(180deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1) rotateY(360deg);
+    opacity: 1;
+  }
+}
+
+.animate-openLetter {
+  animation: openLetter 1.5s ease-in-out forwards;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Animação de hover para cards */
+.hover\:scale-102:hover {
+  transform: scale(1.02);
+}
+
+/* Animação de pulsação para elementos de destaque */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s infinite ease-in-out;
+}
+
+/* Animação para o selo da carta */
+@keyframes sealWiggle {
+  0% {
+    transform: rotate(12deg);
+  }
+  25% {
+    transform: rotate(10deg);
+  }
+  50% {
+    transform: rotate(14deg);
+  }
+  75% {
+    transform: rotate(11deg);
+  }
+  100% {
+    transform: rotate(12deg);
+  }
+}
+
+.animate-seal {
+  animation: sealWiggle 3s infinite ease-in-out;
+}
+
+/* Animação para o brilho das estrelas */
+@keyframes starTwinkle {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+.animate-twinkle {
+  animation: starTwinkle 2s infinite ease-in-out;
+}
+
+.animate-twinkle-slow {
+  animation: starTwinkle 4s infinite ease-in-out;
+}
+
+.animate-twinkle-fast {
+  animation: starTwinkle 1s infinite ease-in-out;
+}
+
+/* Animação para os pins no mapa */
+@keyframes pinBounce {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-pin-bounce {
+  animation: pinBounce 2s infinite ease-in-out;
+}
+
+/* Animação para o coração dentro do pin */
+@keyframes heartBeat {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1);
+  }
+  40% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-heart-beat {
+  animation: heartBeat 1.5s infinite;
+}
+
+/* Estilos para o texto da carta */
+.prose {
+  max-width: 65ch;
+  color: #374151;
+}
+
+.prose p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+
+.prose strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.prose-lg {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+/* Estilos para o mapa */
+.map-pin:hover {
+  filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.6));
+}
+
+/* Estilos para o modal do mapa */
+.map-modal {
+  backdrop-filter: blur(8px);
+}
+
+/* Estilos para o botão de fechar */
+.close-button {
+  transition: transform 0.2s ease;
+}
+
+.close-button:hover {
+  transform: scale(1.1) rotate(90deg);
+}
+
+/* Transições entre páginas - versão simplificada */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
