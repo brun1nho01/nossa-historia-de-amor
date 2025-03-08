@@ -340,6 +340,18 @@ const NextSteps = () => {
   );
 };
 
+// Componente de botão discreto para pular para a timeline
+const SkipButton = () => (
+  <button
+    onClick={() => (window.location.href = "/?showTimeline=true")}
+    className="absolute bottom-4 right-4 bg-white/40 hover:bg-white/60 text-gray-700 rounded-full p-2 text-xs backdrop-blur-sm transition-all duration-300 shadow-sm"
+    aria-label="Pular para a timeline"
+    title="Pular para a timeline"
+  >
+    <Calendar className="w-4 h-4" />
+  </button>
+);
+
 function App() {
   const [screen, setScreen] = useState<"question" | "timeline" | "rejection">(
     "question"
@@ -350,16 +362,21 @@ function App() {
   });
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
   const [isFirstHover, setIsFirstHover] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Verifica se deve mostrar a timeline com base no estado da navegação
+  // Verifica se deve mostrar a timeline com base na URL ou estado da navegação
   useEffect(() => {
-    if (location.state?.showTimeline === true) {
+    // Verifica se há parâmetro na URL
+    const params = new URLSearchParams(window.location.search);
+    const showTimelineParam = params.get("showTimeline");
+
+    if (showTimelineParam === "true" || location.state?.showTimeline === true) {
       // Primeiro muda a tela
       setScreen("timeline");
-      // Limpa o estado de navegação
-      window.history.replaceState({}, document.title);
+      // Limpa o estado de navegação e URL
+      window.history.replaceState({}, document.title, window.location.pathname);
       // Força o scroll para o topo após um pequeno delay
       setTimeout(() => {
         window.scrollTo({
@@ -368,6 +385,13 @@ function App() {
         });
       }, 100);
     }
+
+    // Simula carregamento para melhorar a experiência
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [location.state]);
 
   // Força o scroll para o topo quando a tela muda
@@ -506,6 +530,8 @@ function App() {
                 Não
               </button>
             </div>
+            {/* Botão discreto para pular para a timeline */}
+            <SkipButton />
           </div>
         </div>
       </BackgroundWithOverlay>
@@ -541,89 +567,95 @@ function App() {
   // Renderiza a tela de timeline (por padrão)
   return (
     <BackgroundWithOverlay>
-      <div className="p-4 md:p-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white/80 backdrop-blur rounded-lg shadow-xl p-6 md:p-8 mb-6 md:mb-8">
-            <div className="flex flex-col items-center justify-between mb-6">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">
-                Nossa História de Amor ❤️
-              </h1>
+      {isLoading ? (
+        <div className="flex items-center justify-center h-screen">
+          <LoadingSpinner />
+        </div>
+      ) : (
+        <div className="p-4 md:p-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white/80 backdrop-blur rounded-lg shadow-xl p-6 md:p-8 mb-6 md:mb-8">
+              <div className="flex flex-col items-center justify-between mb-6">
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">
+                  Nossa História de Amor ❤️
+                </h1>
 
-              <Suspense fallback={<LoadingSpinner />}>
-                <div className="w-full bg-white/70 rounded-xl shadow-lg p-4 md:p-6 mb-6">
-                  <div className="flex items-center justify-center mb-4">
-                    <Clock className="w-5 h-5 md:w-6 md:h-6 text-red-500 mr-2" />
-                    <span className="text-lg md:text-xl font-semibold text-gray-700">
-                      Tempo Juntos
-                    </span>
-                  </div>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <div className="w-full bg-white/70 rounded-xl shadow-lg p-4 md:p-6 mb-6">
+                    <div className="flex items-center justify-center mb-4">
+                      <Clock className="w-5 h-5 md:w-6 md:h-6 text-red-500 mr-2" />
+                      <span className="text-lg md:text-xl font-semibold text-gray-700">
+                        Tempo Juntos
+                      </span>
+                    </div>
 
-                  <div className="flex flex-col items-center">
-                    {/* Flip Clock Countdown */}
-                    <div className="mb-4 w-full overflow-x-auto">
-                      <CustomFlipClock />
+                    <div className="flex flex-col items-center">
+                      {/* Flip Clock Countdown */}
+                      <div className="mb-4 w-full overflow-x-auto">
+                        <CustomFlipClock />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Suspense>
-            </div>
-
-            {/* Contador regressivo para a viagem */}
-            <Suspense fallback={<LoadingSpinner />}>
-              <TripCountdown />
-            </Suspense>
-
-            {/* Carta animada com título "Juliana!" */}
-            <div className="mb-8">
-              <h3 className="text-xl font-bold text-center mb-4">
-                Uma Carta Especial Para Você
-              </h3>
-              <div className="bg-white/70 rounded-xl shadow-lg p-4">
-                <Suspense fallback={<LoadingSpinner />}>
-                  <AnimatedLetter />
                 </Suspense>
               </div>
-            </div>
 
-            {/* Galeria de fotos polaroid */}
-            <div className="mb-8">
-              <h3 className="text-xl font-bold text-center mb-6">
-                Nossos Momentos Especiais
-              </h3>
-              <div className="bg-white/70 rounded-xl shadow-lg p-4 md:p-6 mb-6">
-                <p className="text-gray-700 mb-6 text-center italic">
-                  Clique em uma foto para vê-la em tamanho maior
-                </p>
-                <Suspense fallback={<LoadingSpinner />}>
-                  <PolaroidGallery
-                    photos={PHOTOS.map((src, index) => ({
-                      src,
-                      caption:
-                        PHOTO_CAPTIONS[index] ||
-                        `Nosso momento especial ${index + 1}`,
-                    }))}
-                  />
-                </Suspense>
-              </div>
-            </div>
-
-            {/* Seção de próximos passos */}
-            <Suspense fallback={<LoadingSpinner />}>
-              <NextSteps />
-            </Suspense>
-
-            {/* Linha do tempo melhorada */}
-            <div className="mb-8">
-              <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
-                Nossa Linha do Tempo
-              </h3>
+              {/* Contador regressivo para a viagem */}
               <Suspense fallback={<LoadingSpinner />}>
-                <EnhancedTimeline milestones={MILESTONES} />
+                <TripCountdown />
               </Suspense>
+
+              {/* Carta animada com título "Juliana!" */}
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-center mb-4">
+                  Uma Carta Especial Para Você
+                </h3>
+                <div className="bg-white/70 rounded-xl shadow-lg p-4">
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <AnimatedLetter />
+                  </Suspense>
+                </div>
+              </div>
+
+              {/* Galeria de fotos polaroid */}
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-center mb-6">
+                  Nossos Momentos Especiais
+                </h3>
+                <div className="bg-white/70 rounded-xl shadow-lg p-4 md:p-6 mb-6">
+                  <p className="text-gray-700 mb-6 text-center italic">
+                    Clique em uma foto para vê-la em tamanho maior
+                  </p>
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <PolaroidGallery
+                      photos={PHOTOS.map((src, index) => ({
+                        src,
+                        caption:
+                          PHOTO_CAPTIONS[index] ||
+                          `Nosso momento especial ${index + 1}`,
+                      }))}
+                    />
+                  </Suspense>
+                </div>
+              </div>
+
+              {/* Seção de próximos passos */}
+              <Suspense fallback={<LoadingSpinner />}>
+                <NextSteps />
+              </Suspense>
+
+              {/* Linha do tempo melhorada */}
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
+                  Nossa Linha do Tempo
+                </h3>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <EnhancedTimeline milestones={MILESTONES} />
+                </Suspense>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </BackgroundWithOverlay>
   );
 }

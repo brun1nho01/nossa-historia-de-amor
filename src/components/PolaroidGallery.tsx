@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
 import ReactDOM from "react-dom";
 
 interface Photo {
@@ -12,11 +18,14 @@ interface PolaroidGalleryProps {
 
 const PolaroidGallery: React.FC<PolaroidGalleryProps> = ({ photos }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  const [rotations, setRotations] = useState<number[]>([]);
-  const [tapeColors, setTapeColors] = useState<string[]>([]);
+  const [visiblePhotos, setVisiblePhotos] = useState<number>(4); // Inicialmente mostra apenas 4 fotos
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  // Gera rotações e cores aleatórias apenas uma vez na montagem do componente
-  useEffect(() => {
+  // Gera rotações e cores aleatórias apenas uma vez e memoriza os resultados
+  const { rotations, tapeColors } = useMemo(() => {
     const colorOptions = [
       "#FFD700",
       "#FF6B6B",
@@ -29,9 +38,47 @@ const PolaroidGallery: React.FC<PolaroidGalleryProps> = ({ photos }) => {
       () => colorOptions[Math.floor(Math.random() * colorOptions.length)]
     );
 
-    setRotations(newRotations);
-    setTapeColors(newTapeColors);
+    return { rotations: newRotations, tapeColors: newTapeColors };
   }, [photos.length]);
+
+  // Verifica se é um dispositivo móvel
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkIfMobile);
+    };
+  }, []);
+
+  // Configura o observador de interseção para carregamento lazy
+  useEffect(() => {
+    if (loadMoreRef.current && visiblePhotos < photos.length) {
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            // Quando o elemento "carregar mais" é visível, carrega mais fotos
+            setVisiblePhotos((prev) =>
+              Math.min(prev + (isMobile ? 4 : 8), photos.length)
+            );
+          }
+        },
+        { threshold: 0.1 }
+      );
+
+      observerRef.current.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [visiblePhotos, photos.length, isMobile]);
 
   // Manipulador de clique para abrir a foto ampliada
   const handlePolaroidClick = useCallback((index: number) => {
@@ -164,8 +211,8 @@ const PolaroidGallery: React.FC<PolaroidGalleryProps> = ({ photos }) => {
   };
 
   return (
-    <div className="polaroid-container">
-      {photos.map((photo, index) => {
+    <div className="polaroid-container" ref={containerRef}>
+      {photos.slice(0, visiblePhotos).map((photo, index) => {
         const isExpanded = expandedIndex === index;
         const rotation = rotations[index] || 0;
         const tapeColor = tapeColors[index] || "#FFD700";
@@ -188,6 +235,8 @@ const PolaroidGallery: React.FC<PolaroidGalleryProps> = ({ photos }) => {
               alt={photo.caption}
               className="polaroid-img"
               loading="lazy"
+              width="250"
+              height="200"
             />
             <div className="polaroid-caption-container">
               <div className="polaroid-caption">{photo.caption}</div>
@@ -195,6 +244,27 @@ const PolaroidGallery: React.FC<PolaroidGalleryProps> = ({ photos }) => {
           </div>
         );
       })}
+
+      {/* Elemento de referência para carregar mais fotos */}
+      {visiblePhotos < photos.length && (
+        <div
+          ref={loadMoreRef}
+          className="load-more-trigger"
+          style={{
+            height: "20px",
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "1rem",
+          }}
+        >
+          <div className="loading-indicator">
+            <div className="loading-dot"></div>
+            <div className="loading-dot"></div>
+            <div className="loading-dot"></div>
+          </div>
+        </div>
+      )}
 
       {renderModal()}
     </div>

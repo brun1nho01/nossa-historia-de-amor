@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface StarrySkyProps {
   starCount?: number;
@@ -12,15 +12,39 @@ const StarrySky: React.FC<StarrySkyProps> = ({
   constellationCount = 3,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detecta se é um dispositivo móvel
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkIfMobile);
+    };
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
+
+    // Ajusta a quantidade de elementos com base no dispositivo
+    const adjustedStarCount = isMobile ? Math.floor(starCount / 2) : starCount;
+    const adjustedShootingStarCount = isMobile
+      ? Math.floor(shootingStarCount / 2)
+      : shootingStarCount;
+    const adjustedConstellationCount = isMobile
+      ? Math.floor(constellationCount / 2) + 1
+      : constellationCount;
 
     // Limpa estrelas existentes
     containerRef.current.innerHTML = "";
 
     // Cria estrelas estáticas
-    for (let i = 0; i < starCount; i++) {
+    for (let i = 0; i < adjustedStarCount; i++) {
       const star = document.createElement("div");
       star.className = "star";
 
@@ -53,7 +77,7 @@ const StarrySky: React.FC<StarrySkyProps> = ({
     }
 
     // Cria constelações
-    for (let c = 0; c < constellationCount; c++) {
+    for (let c = 0; c < adjustedConstellationCount; c++) {
       const constellation = document.createElement("div");
       constellation.className = "constellation";
 
@@ -62,7 +86,9 @@ const StarrySky: React.FC<StarrySkyProps> = ({
       const baseY = Math.random() * 80 + 10; // 10-90%
 
       // Número de estrelas na constelação (3-7)
-      const constellationStars = Math.floor(Math.random() * 5) + 3;
+      // Reduz o número de estrelas em dispositivos móveis
+      const maxStars = isMobile ? 4 : 7;
+      const constellationStars = Math.floor(Math.random() * (maxStars - 2)) + 3;
 
       // Criar estrelas da constelação
       const starPositions: { x: number; y: number }[] = [];
@@ -124,42 +150,15 @@ const StarrySky: React.FC<StarrySkyProps> = ({
     }
 
     // Cria estrelas cadentes
-    for (let i = 0; i < shootingStarCount; i++) {
-      const shootingStar = document.createElement("div");
-      shootingStar.className = "shooting-star";
-
-      // Posição aleatória
-      shootingStar.style.left = `${Math.random() * 100}%`;
-      shootingStar.style.top = `${Math.random() * 50}%`;
-
-      // Rotação aleatória
-      const rotation = Math.random() * 45 - 22.5;
-      shootingStar.style.setProperty("--rotation", `${rotation}deg`);
-
-      // Duração e atraso aleatórios
-      const duration = Math.random() * 2 + 1;
-      const delay = Math.random() * 15;
-      shootingStar.style.setProperty("--shooting-duration", `${duration}s`);
-      shootingStar.style.setProperty("--shooting-delay", `${delay}s`);
-
-      // Tamanho variável
-      const size = Math.random() * 2 + 1;
-      shootingStar.style.setProperty("--shooting-size", `${size}px`);
-
-      containerRef.current.appendChild(shootingStar);
-    }
-
-    // Recria estrelas cadentes periodicamente
-    const interval = setInterval(() => {
+    const createShootingStars = () => {
       if (!containerRef.current) return;
 
       // Remove estrelas cadentes antigas
-      const shootingStars =
+      const oldShootingStars =
         containerRef.current.querySelectorAll(".shooting-star");
-      shootingStars.forEach((star) => star.remove());
+      oldShootingStars.forEach((star) => star.remove());
 
-      // Cria novas estrelas cadentes
-      for (let i = 0; i < shootingStarCount; i++) {
+      for (let i = 0; i < adjustedShootingStarCount; i++) {
         const shootingStar = document.createElement("div");
         shootingStar.className = "shooting-star";
 
@@ -173,7 +172,7 @@ const StarrySky: React.FC<StarrySkyProps> = ({
 
         // Duração e atraso aleatórios
         const duration = Math.random() * 2 + 1;
-        const delay = Math.random() * 5;
+        const delay = Math.random() * 15;
         shootingStar.style.setProperty("--shooting-duration", `${duration}s`);
         shootingStar.style.setProperty("--shooting-delay", `${delay}s`);
 
@@ -183,10 +182,17 @@ const StarrySky: React.FC<StarrySkyProps> = ({
 
         containerRef.current.appendChild(shootingStar);
       }
-    }, 15000); // Recria a cada 15 segundos
+    };
+
+    // Cria estrelas cadentes iniciais
+    createShootingStars();
+
+    // Recria estrelas cadentes periodicamente
+    // Aumenta o intervalo em dispositivos móveis para economizar recursos
+    const interval = setInterval(createShootingStars, isMobile ? 25000 : 15000);
 
     return () => clearInterval(interval);
-  }, [starCount, shootingStarCount, constellationCount]);
+  }, [starCount, shootingStarCount, constellationCount, isMobile]);
 
   return <div ref={containerRef} className="starry-sky"></div>;
 };
